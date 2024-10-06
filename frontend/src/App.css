@@ -19,10 +19,11 @@ body {
   background-color: #4CAF50;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative; /* Allow absolute positioning of children */
 }
 
 .video-container {
-  position: relative;
+  position: relative; /* Allow absolute positioning for overlays */
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
@@ -34,20 +35,32 @@ body {
   height: 400px;
 }
 
+.overlay-container {
+  display: flex; /* Enable flexbox */
+  flex-wrap: wrap; /* Allow overlays to wrap to the next line if they exceed container width */
+  justify-content: center; /* Center the overlays horizontally */
+  margin-top: 20px; /* Space above the overlay container */
+}
 
 .overlay {
-  position: absolute;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for text overlay */
-  padding: 10px;
-  border-radius: 5px;
-  z-index: 10;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7); /* Slightly darker background for better visibility */
+  border: 1px solid white; /* Add a border to distinguish overlays */
+  border-radius: 5px; /* Slightly rounded corners */
+  padding: 10px; /* Add padding for better aesthetics */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); /* Add some shadow for depth */
+  z-index: 10; /* Ensure overlays are above the video player */
+  margin: 10px; /* Add margin to create space between overlays */
+  display: flex; /* Use flex for the overlay content */
+  flex-direction: column; /* Stack content vertically */
+  align-items: center; /* Center align content */
 }
 
 .overlay-logo {
-  width: 100%;
-  height: auto;
-  border-radius: 4px;
+  max-width: 100%; /* Ensure the logo fits within the overlay */
+  max-height: 100px; /* Limit height of logo */
+  display: block; /* Ensure the image behaves as a block element */
+  margin: 5px 0; /* Add some margin for spacing */
 }
 
 .overlay-list {
@@ -89,6 +102,7 @@ body {
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
+  margin-right: 10px; /* Space between inputs */
 }
 
 .overlay-btn {
@@ -101,6 +115,21 @@ body {
   cursor: pointer;
 }
 
+.delete-button {
+  margin-top: 10px;
+  background-color: red; /* Color for delete button */
+  color: white; /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Slightly rounded corners */
+  cursor: pointer; /* Change cursor to pointer */
+  padding: 5px 10px; /* Add padding */
+}
+
+.delete-button:hover {
+  background-color: darkred; /* Hover effect for delete button */
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
   .App {
     padding: 10px;
