@@ -1,45 +1,27 @@
-from flask import Flask, jsonify, request
-from flask_pymongo import PyMongo
-from bson.objectid import ObjectId
+from flask import Flask, request, jsonify
 from flask_cors import CORS
-from dotenv import load_dotenv
-import os
-
-# Load environment variables from .env
-load_dotenv()
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS for all routes
 
-# MongoDB Config
-app.config["MONGO_URI"] = os.getenv("MONGO_URI")
-mongo = PyMongo(app)
+# Set up MongoDB connection
+client = MongoClient('mongodb://localhost:27017/')  # Adjust the URI as needed
+db = client['your_database_name']  # Replace with your database name
+overlays_collection = db['overlays']
 
-# Connect to the overlays collection
-db = mongo.db
-overlays_collection = db.overlays
-
-# Routes
 @app.route('/overlays', methods=['GET'])
 def get_overlays():
-    try:
-        overlays = overlays_collection.find()
-        response = []
-        for overlay in overlays:
-            response.append({
-                '_id': str(overlay['_id']),
-                'text': overlay['text'],
-                'logo_url': overlay['logo_url'],
-                'position': overlay['position'],
-                'size': overlay['size']
-            })
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    overlays = list(overlays_collection.find())
+    for overlay in overlays:
+        overlay['_id'] = str(overlay['_id'])  # Convert ObjectId to string
+    return jsonify(overlays), 200
 
 @app.route('/overlays', methods=['POST'])
 def create_overlay():
     data = request.json
+    print("Received data:", data)  # Debug line to see received data
     if not data or not data.get('text') or not data.get('logo_url'):
         return jsonify({'error': 'Invalid input'}), 400
 
@@ -49,29 +31,17 @@ def create_overlay():
         'position': data.get('position'),
         'size': data.get('size')
     }).inserted_id
+    
+    # Return a JSON response with the overlay ID
     return jsonify({'_id': str(overlay_id)}), 201
-
-@app.route('/overlays/<id>', methods=['PUT'])
-def update_overlay(id):
-    try:
-        data = request.json
-        overlays_collection.update_one({'_id': ObjectId(id)}, {"$set": {
-            'text': data.get('text'),
-            'logo_url': data.get('logo_url'),
-            'position': data.get('position'),
-            'size': data.get('size')
-        }})
-        return jsonify({'msg': 'Overlay updated'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/overlays/<id>', methods=['DELETE'])
 def delete_overlay(id):
-    try:
-        overlays_collection.delete_one({'_id': ObjectId(id)})
-        return jsonify({'msg': 'Overlay deleted'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    result = overlays_collection.delete_one({'_id': ObjectId(id)})
+    if result.deleted_count == 1:
+        return jsonify({'message': 'Overlay deleted successfully'}), 200
+    else:
+        return jsonify({'error': 'Overlay not found'}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)

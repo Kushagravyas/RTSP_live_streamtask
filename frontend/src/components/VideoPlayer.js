@@ -6,8 +6,8 @@ const VideoPlayer = () => {
     <div className="video-container"> {/* Apply video-container class */}
       {/* Embed the iframe from RTSP.me */}
       <iframe
-        width="300"
-        height="300"
+        width="640"
+        height="480"
         src="https://rtsp.me/embed/65ydBEbb/"
         frameBorder="0"
         allowFullScreen

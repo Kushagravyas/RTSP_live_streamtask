@@ -9,8 +9,12 @@ const App = () => {
   const [overlays, setOverlays] = useState([]);
 
   const fetchOverlays = async () => {
-    const response = await axios.get('http://localhost:5000/overlays');
-    setOverlays(response.data);
+    try {
+      const response = await axios.get('http://localhost:5000/overlays');
+      setOverlays(response.data);
+    } catch (error) {
+      console.error('Error fetching overlays:', error);
+    }
   };
 
   useEffect(() => {
@@ -19,7 +23,7 @@ const App = () => {
 
   return (
     <div className="App"> {/* Add App class */}
-      <h1 style={{textAlign:"center"}}>Livestream with Overlays</h1>
+      <h1 style={{ textAlign: "center" }}>Livestream with Overlays</h1>
 
       {/* Video player */}
       <VideoPlayer />
@@ -30,14 +34,24 @@ const App = () => {
           key={overlay._id}
           className="overlay" // Apply overlay class
           style={{
+            position: 'absolute', // Ensure absolute positioning for overlays
             top: `${overlay.position.y}px`,
             left: `${overlay.position.x}px`,
             width: `${overlay.size.width}px`,
-            height: `${overlay.size.height}px`
+            height: `${overlay.size.height}px`,
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background for text overlay
           }}
         >
           <p>{overlay.text}</p>
-          {overlay.logo_url && <img src={overlay.logo_url} alt="Overlay Logo" className="overlay-logo" />} {/* Add overlay-logo class */}
+          {overlay.logo_url && (
+            <img
+              src={overlay.logo_url}
+              alt="Overlay Logo"
+              className="overlay-logo"
+              style={{ maxWidth: '100%' }} // Ensure the logo fits within the overlay
+            />
+          )}
         </div>
       ))}
 
