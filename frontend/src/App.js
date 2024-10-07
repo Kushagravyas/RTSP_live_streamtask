@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import VideoPlayer from './components/VideoPlayer';
-import { OverlayForm, OverlayDisplay } from './components/OverlayForm'; // Adjust the import path as needed
-import './App.css'; // Import the CSS file
+import { OverlayForm, OverlayDisplay } from './components/OverlayForm'; 
+import './App.css'; 
 
 const App = () => {
   const [overlays, setOverlays] = useState([]);

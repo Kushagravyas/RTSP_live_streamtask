@@ -4,24 +4,24 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)  
 
-# Set up MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')  # Adjust the URI as needed
-db = client['your_database_name']  # Replace with your database name
+
+client = MongoClient('mongodb://localhost:27017/')  
+db = client['your_database_name']  
 overlays_collection = db['overlays']
 
 @app.route('/overlays', methods=['GET'])
 def get_overlays():
     overlays = list(overlays_collection.find())
     for overlay in overlays:
-        overlay['_id'] = str(overlay['_id'])  # Convert ObjectId to string
+        overlay['_id'] = str(overlay['_id'])  
     return jsonify(overlays), 200
 
 @app.route('/overlays', methods=['POST'])
 def create_overlay():
     data = request.json
-    print("Received data:", data)  # Debug line to see received data
+    print("Received data:", data)  
     if not data or not data.get('text') or not data.get('logo_url'):
         return jsonify({'error': 'Invalid input'}), 400
 
@@ -32,7 +32,7 @@ def create_overlay():
         'size': data.get('size')
     }).inserted_id
     
-    # Return a JSON response with the overlay ID
+   
     return jsonify({'_id': str(overlay_id)}), 201
 
 @app.route('/overlays/<id>', methods=['DELETE'])
